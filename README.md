@@ -16,7 +16,30 @@ familles de vulnérabilités web classiques.
 - Authentification par session
 - Aucune dépendance externe à installer hors Maven
 
-## Démarrage
+## Téléchargements (releases)
+
+Des JAR exécutables prêts à l'emploi sont publiés dans les
+[**Releases**](../../releases). Chaque JAR est compilé et validé pour un runtime
+Java donné :
+
+| JAR (release) | Runtime | Stack | Branche |
+|---------------|---------|-------|---------|
+| `stockconsult-java8.jar`  | Java 8+  | Spring Boot 2.7 (`javax`)   | [`main`](../../tree/main)     |
+| `stockconsult-java11.jar` | Java 11+ | Spring Boot 2.7 (`javax`)   | [`java11`](../../tree/java11) |
+| `stockconsult-java21.jar` | Java 21+ | Spring Boot 3.5 (`jakarta`) | [`java21`](../../tree/java21) |
+| `stockconsult-java25.jar` | Java 25  | Spring Boot 3.5 (`jakarta`) | [`java25`](../../tree/java25) |
+
+> Les builds Java 21/25 utilisent **Spring Boot 3.5** (namespace `jakarta.*`),
+> car Spring Boot 2.7 ne tourne pas proprement sur ces runtimes récents. Les
+> builds Java 8/11 restent en **Spring Boot 2.7** (namespace `javax.*`).
+
+Lancer un JAR téléchargé :
+
+```bash
+java -jar stockconsult-java25.jar
+```
+
+## Démarrage (depuis les sources)
 
 ```bash
 mvn spring-boot:run
