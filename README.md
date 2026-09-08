@@ -39,6 +39,34 @@ Lancer un JAR téléchargé :
 java -jar stockconsult-java25.jar
 ```
 
+## Docker
+
+Chaque branche fournit un `Dockerfile` multi-stage (build Maven + runtime JRE) et
+un `docker-compose.yml`, avec l'image de base adaptée au Java de la branche :
+
+| Branche | Image build | Image runtime |
+|---------|-------------|---------------|
+| `main`   | `maven:3.9-eclipse-temurin-8`  | `eclipse-temurin:8-jre`  |
+| `java11` | `maven:3.9-eclipse-temurin-11` | `eclipse-temurin:11-jre` |
+| `java21` | `maven:3.9-eclipse-temurin-21` | `eclipse-temurin:21-jre` |
+| `java25` | `maven:3.9-eclipse-temurin-25` | `eclipse-temurin:25-jre` |
+
+Construire et lancer (le `Dockerfile` compile le JAR, aucun build local requis) :
+
+```bash
+docker build -t stockconsult .
+docker run --rm -p 8080:8080 stockconsult
+```
+
+Ou via Compose (avec volume pour persister la base H2) :
+
+```bash
+docker compose up --build
+```
+
+Puis http://localhost:8080 — login **admin / admin**. Le fichier de base H2 est
+écrit dans `/app/data` du conteneur (monté sur le volume `vulnstock-data`).
+
 ## Démarrage (depuis les sources)
 
 ```bash
