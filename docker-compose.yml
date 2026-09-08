@@ -1,0 +1,12 @@
+services:
+  vulnstock:
+    build: .
+    image: stockconsult:java11
+    ports:
+      - "8080:8080"
+    volumes:
+      # Persiste la base H2 (fichier) hors du conteneur
+      - vulnstock-data:/app/data
+
+volumes:
+  vulnstock-data:
