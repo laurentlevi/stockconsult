@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Import distant - VulnStock</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="nav">
+    <span class="brand">📈 VulnStock</span>
+    <a href="/">Cours</a>
+    <a href="/tools/diagnostics">Diagnostic</a>
+    <a href="/tools/fetch">Import distant</a>
+    <span class="spacer"></span>
+    <span class="who">Connecte : <b th:text="${user}">?</b></span>
+    <a href="/logout">Deconnexion</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>Import d'un flux distant</h1>
+        <form method="get" action="/tools/fetch">
+            <label>URL du flux (logo, cotation externe...)</label>
+            <input type="text" name="url" th:value="${url}" placeholder="https://exemple.com/quote.json"/>
+            <button type="submit">Recuperer</button>
+        </form>
+        <p class="hint">Le serveur telecharge l'URL fournie et affiche la reponse.</p>
+    </div>
+
+    <div class="card" th:if="${status}">
+        <h2>Statut HTTP</h2>
+        <pre th:text="${status}"></pre>
+    </div>
+
+    <div class="card" th:if="${body}">
+        <h2>Reponse</h2>
+        <pre th:text="${body}"></pre>
+    </div>
+</div>
+</body>
+</html>

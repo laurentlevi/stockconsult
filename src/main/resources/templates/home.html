@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Cours de bourse - VulnStock</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="nav">
+    <span class="brand">📈 VulnStock</span>
+    <a href="/">Cours</a>
+    <a href="/tools/diagnostics">Diagnostic</a>
+    <a href="/tools/fetch">Import distant</a>
+    <span class="spacer"></span>
+    <span class="who">Connecte : <b th:text="${user}">?</b> (<span th:text="${role}">?</span>)</span>
+    <a href="/logout">Deconnexion</a>
+</div>
+<div class="container">
+    <div class="warn">
+        ⚠️ Application <b>volontairement vulnerable</b> a des fins de demonstration
+        (injection SQL, injection de commande, SSRF). Ne pas exposer sur un reseau reel.
+    </div>
+
+    <div class="card">
+        <h1>Consulter un cours</h1>
+        <form method="get" action="/">
+            <label>Trigramme ou nom de l'action</label>
+            <input type="text" name="q" th:value="${query}" placeholder="ex : AAPL, Apple, BNP..."/>
+            <button type="submit">Rechercher</button>
+        </form>
+        <p class="hint">Recherche par trigramme (symbole) ou par nom de societe.</p>
+    </div>
+
+    <div class="card" th:if="${sql}">
+        <h2>Requete executee</h2>
+        <pre th:text="${sql}"></pre>
+    </div>
+
+    <div class="card" th:if="${error}">
+        <div class="error" th:text="${error}"></div>
+    </div>
+
+    <div class="card" th:if="${results != null and !results.isEmpty()}">
+        <h2>Resultats</h2>
+        <table>
+            <thead>
+            <tr>
+                <th th:each="col : ${results[0].keySet()}" th:text="${col}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${results}">
+                <td th:each="cell : ${row.values()}" th:text="${cell}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card" th:if="${results != null and results.isEmpty()}">
+        <p>Aucun resultat.</p>
+    </div>
+</div>
+</body>
+</html>

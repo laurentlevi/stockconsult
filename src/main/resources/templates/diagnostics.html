@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Diagnostic reseau - VulnStock</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+<div class="nav">
+    <span class="brand">📈 VulnStock</span>
+    <a href="/">Cours</a>
+    <a href="/tools/diagnostics">Diagnostic</a>
+    <a href="/tools/fetch">Import distant</a>
+    <span class="spacer"></span>
+    <span class="who">Connecte : <b th:text="${user}">?</b></span>
+    <a href="/logout">Deconnexion</a>
+</div>
+<div class="container">
+    <div class="card">
+        <h1>Diagnostic reseau (ping)</h1>
+        <form method="get" action="/tools/diagnostics">
+            <label>Hote a tester</label>
+            <input type="text" name="host" th:value="${host}" placeholder="ex : 8.8.8.8"/>
+            <button type="submit">Lancer le ping</button>
+        </form>
+        <p class="hint">Verifie l'accessibilite d'un hote depuis le serveur.</p>
+    </div>
+
+    <div class="card" th:if="${command}">
+        <h2>Commande executee</h2>
+        <pre th:text="${command}"></pre>
+    </div>
+
+    <div class="card" th:if="${output}">
+        <h2>Sortie</h2>
+        <pre th:text="${output}"></pre>
+    </div>
+</div>
+</body>
+</html>
