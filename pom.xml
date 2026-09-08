@@ -18,7 +18,7 @@
     <description>Application volontairement vulnerable (SQLi / Command Injection / SSRF) pour demo de securite</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>
