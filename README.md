@@ -27,16 +27,19 @@ Java donné :
 | `stockconsult-java8.jar`  | Java 8+  | Spring Boot 2.7 (`javax`)   | [`main`](../../tree/main)     |
 | `stockconsult-java11.jar` | Java 11+ | Spring Boot 2.7 (`javax`)   | [`java11`](../../tree/java11) |
 | `stockconsult-java21.jar` | Java 21+ | Spring Boot 3.5 (`jakarta`) | [`java21`](../../tree/java21) |
-| `stockconsult-java25.jar` | Java 25  | Spring Boot 3.5 (`jakarta`) | [`java25`](../../tree/java25) |
 
-> Les builds Java 21/25 utilisent **Spring Boot 3.5** (namespace `jakarta.*`),
-> car Spring Boot 2.7 ne tourne pas proprement sur ces runtimes récents. Les
-> builds Java 8/11 restent en **Spring Boot 2.7** (namespace `javax.*`).
+> Le build Java 21 utilise **Spring Boot 3.5** (namespace `jakarta.*`), car Spring
+> Boot 2.7 ne tourne pas proprement sur ce runtime récent. Les builds Java 8/11
+> restent en **Spring Boot 2.7** (namespace `javax.*`).
+>
+> ℹ️ Un build **Java 25** a existé mais a été retiré : l'agent Dynatrace (RAP)
+> ne prend pas encore en charge Java 25. Utilisez `java21` comme version la plus
+> récente.
 
 Lancer un JAR téléchargé :
 
 ```bash
-java -jar stockconsult-java25.jar
+java -jar stockconsult-java21.jar
 ```
 
 ## Docker
@@ -49,7 +52,6 @@ un `docker-compose.yml`, avec l'image de base adaptée au Java de la branche :
 | `main`   | `maven:3.9-eclipse-temurin-8`  | `eclipse-temurin:8-jre`  |
 | `java11` | `maven:3.9-eclipse-temurin-11` | `eclipse-temurin:11-jre` |
 | `java21` | `maven:3.9-eclipse-temurin-21` | `eclipse-temurin:21-jre` |
-| `java25` | `maven:3.9-eclipse-temurin-25` | `eclipse-temurin:25-jre` |
 
 ### Images pré-construites (Docker Hub)
 
@@ -58,7 +60,7 @@ Des images multi-arch (`linux/amd64` + `linux/arm64`) sont publiées sur
 Aucun build nécessaire, il suffit de les lancer :
 
 ```bash
-# latest = Java 25 (Spring Boot 3.5)
+# latest = Java 21 (Spring Boot 3.5)
 docker run --rm -p 8080:8080 laurentlevi/stockconsult:latest
 ```
 
@@ -68,13 +70,11 @@ Tag par version de Java :
 docker run --rm -p 8080:8080 laurentlevi/stockconsult:java8
 docker run --rm -p 8080:8080 laurentlevi/stockconsult:java11
 docker run --rm -p 8080:8080 laurentlevi/stockconsult:java21
-docker run --rm -p 8080:8080 laurentlevi/stockconsult:java25
 ```
 
 | Tag Docker Hub | Java | Stack |
 |----------------|------|-------|
-| `latest`, `java25` | 25 | Spring Boot 3.5 (`jakarta`) |
-| `java21` | 21 | Spring Boot 3.5 (`jakarta`) |
+| `latest`, `java21` | 21 | Spring Boot 3.5 (`jakarta`) |
 | `java11` | 11 | Spring Boot 2.7 (`javax`)  |
 | `java8`  | 8  | Spring Boot 2.7 (`javax`)  |
 
@@ -108,7 +108,7 @@ Puis http://localhost:8080 — login **admin / admin**. Le fichier de base H2 es
 
 Chaque branche fournit des manifests dans [`k8s/`](k8s/) (`Deployment` + `Service`
 + `kustomization.yaml`), pointant vers l'image Docker Hub de la branche
-(`main`→`java8`, `java11`, `java21`, `java25`).
+(`main`→`java8`, `java11`, `java21`).
 
 Déployer avec kustomize :
 
