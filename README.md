@@ -51,7 +51,44 @@ un `docker-compose.yml`, avec l'image de base adaptée au Java de la branche :
 | `java21` | `maven:3.9-eclipse-temurin-21` | `eclipse-temurin:21-jre` |
 | `java25` | `maven:3.9-eclipse-temurin-25` | `eclipse-temurin:25-jre` |
 
-Construire et lancer (le `Dockerfile` compile le JAR, aucun build local requis) :
+### Images pré-construites (Docker Hub)
+
+Des images multi-arch (`linux/amd64` + `linux/arm64`) sont publiées sur
+[**Docker Hub — `laurentlevi/stockconsult`**](https://hub.docker.com/r/laurentlevi/stockconsult).
+Aucun build nécessaire, il suffit de les lancer :
+
+```bash
+# latest = Java 25 (Spring Boot 3.5)
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:latest
+```
+
+Tag par version de Java :
+
+```bash
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java8
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java11
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java21
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java25
+```
+
+| Tag Docker Hub | Java | Stack |
+|----------------|------|-------|
+| `latest`, `java25` | 25 | Spring Boot 3.5 (`jakarta`) |
+| `java21` | 21 | Spring Boot 3.5 (`jakarta`) |
+| `java11` | 11 | Spring Boot 2.7 (`javax`)  |
+| `java8`  | 8  | Spring Boot 2.7 (`javax`)  |
+
+Persister la base H2 avec un volume :
+
+```bash
+docker run --rm -p 8080:8080 -v vulnstock-data:/app/data laurentlevi/stockconsult:latest
+```
+
+Puis http://localhost:8080 — login **admin / admin**.
+
+### Construire l'image localement
+
+Construire et lancer depuis les sources (le `Dockerfile` compile le JAR, aucun build local requis) :
 
 ```bash
 docker build -t stockconsult .
