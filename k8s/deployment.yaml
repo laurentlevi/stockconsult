@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stockconsult
+  labels:
+    app: stockconsult
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stockconsult
+  template:
+    metadata:
+      labels:
+        app: stockconsult
+    spec:
+      containers:
+        - name: stockconsult
+          # Image multi-arch publiee sur Docker Hub (tag = version de Java de la branche)
+          image: laurentlevi/stockconsult:java21
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /login
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+          volumeMounts:
+            # Base H2 (fichier) - ephemere ici, recreee au demarrage.
+            # Remplacer par un PersistentVolumeClaim pour persister.
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          emptyDir: {}
