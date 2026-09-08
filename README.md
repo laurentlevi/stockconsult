@@ -1,5 +1,7 @@
 # VulnStock — appli de démo de sécurité (SQLi / Command Injection / SSRF)
 
+*🌍 Langue : **Français** · [English](README.en.md)*
+
 > ⚠️ **Application volontairement vulnérable, à but pédagogique uniquement.**
 > Elle contient des failles de sécurité intentionnelles. **Ne jamais l'exposer sur
 > Internet ni sur un réseau de production.** À utiliser en local, en environnement
