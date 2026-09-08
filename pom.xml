@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.5.6</version>
         <relativePath/>
     </parent>
 
@@ -18,7 +18,7 @@
     <description>Application volontairement vulnerable (SQLi / Command Injection / SSRF) pour demo de securite</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>25</java.version>
     </properties>
 
     <dependencies>
@@ -37,7 +37,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.1.214</version>
         </dependency>
     </dependencies>
 
