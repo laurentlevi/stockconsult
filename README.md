@@ -104,6 +104,41 @@ docker compose up --build
 Puis http://localhost:8080 — login **admin / admin**. Le fichier de base H2 est
 écrit dans `/app/data` du conteneur (monté sur le volume `vulnstock-data`).
 
+## Kubernetes
+
+Chaque branche fournit des manifests dans [`k8s/`](k8s/) (`Deployment` + `Service`
++ `kustomization.yaml`), pointant vers l'image Docker Hub de la branche
+(`main`→`java8`, `java11`, `java21`, `java25`).
+
+Déployer avec kustomize :
+
+```bash
+kubectl apply -k k8s/
+kubectl rollout status deploy/stockconsult
+```
+
+Accéder à l'appli via un port-forward :
+
+```bash
+kubectl port-forward svc/stockconsult 8080:8080
+```
+
+Puis http://localhost:8080 — login **admin / admin**.
+
+Changer la version de Java déployée (sans changer de branche) en surchargeant le
+tag d'image :
+
+```bash
+cd k8s && kustomize edit set image laurentlevi/stockconsult=laurentlevi/stockconsult:java21
+```
+
+Le `Service` est en `ClusterIP` (accès par port-forward). Pour une exposition
+directe, passer son `type` en `NodePort` ou `LoadBalancer`. Supprimer le
+déploiement : `kubectl delete -k k8s/`.
+
+> ⚠️ Rappel : l'appli est **volontairement vulnérable**. Ne la déployez que sur un
+> cluster de test isolé, jamais exposée publiquement.
+
 ## Démarrage (depuis les sources)
 
 ```bash
