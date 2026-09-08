@@ -1,5 +1,7 @@
 # VulnStock — appli de démo de sécurité (SQLi / Command Injection / SSRF)
 
+*🌍 Langue : **Français** · [English](README.en.md)*
+
 > ⚠️ **Application volontairement vulnérable, à but pédagogique uniquement.**
 > Elle contient des failles de sécurité intentionnelles. **Ne jamais l'exposer sur
 > Internet ni sur un réseau de production.** À utiliser en local, en environnement
@@ -11,12 +13,135 @@ familles de vulnérabilités web classiques.
 
 ## Stack
 
-- Java 8, Spring Boot 2.7 (Web + Thymeleaf + JDBC)
+- Java 11, Spring Boot 2.7 (Web + Thymeleaf + JDBC)
 - Base **H2 en fichier** (`./data/vulnstock.mv.db`), créée automatiquement au démarrage
 - Authentification par session
 - Aucune dépendance externe à installer hors Maven
 
-## Démarrage
+## Téléchargements (releases)
+
+Des JAR exécutables prêts à l'emploi sont publiés dans les
+[**Releases**](../../releases). Chaque JAR est compilé et validé pour un runtime
+Java donné :
+
+| JAR (release) | Runtime | Stack | Branche |
+|---------------|---------|-------|---------|
+| `stockconsult-java8.jar`  | Java 8+  | Spring Boot 2.7 (`javax`)   | [`main`](../../tree/main)     |
+| `stockconsult-java11.jar` | Java 11+ | Spring Boot 2.7 (`javax`)   | [`java11`](../../tree/java11) |
+| `stockconsult-java21.jar` | Java 21+ | Spring Boot 3.5 (`jakarta`) | [`java21`](../../tree/java21) |
+
+> Le build Java 21 utilise **Spring Boot 3.5** (namespace `jakarta.*`), car Spring
+> Boot 2.7 ne tourne pas proprement sur ce runtime récent. Les builds Java 8/11
+> restent en **Spring Boot 2.7** (namespace `javax.*`).
+>
+> ℹ️ Un build **Java 25** a existé mais a été retiré : l'agent Dynatrace (RAP)
+> ne prend pas encore en charge Java 25. Utilisez `java21` comme version la plus
+> récente.
+
+Lancer un JAR téléchargé :
+
+```bash
+java -jar stockconsult-java21.jar
+```
+
+## Docker
+
+Chaque branche fournit un `Dockerfile` multi-stage (build Maven + runtime JRE) et
+un `docker-compose.yml`, avec l'image de base adaptée au Java de la branche :
+
+| Branche | Image build | Image runtime |
+|---------|-------------|---------------|
+| `main`   | `maven:3.9-eclipse-temurin-8`  | `eclipse-temurin:8-jre`  |
+| `java11` | `maven:3.9-eclipse-temurin-11` | `eclipse-temurin:11-jre` |
+| `java21` | `maven:3.9-eclipse-temurin-21` | `eclipse-temurin:21-jre` |
+
+### Images pré-construites (Docker Hub)
+
+Des images multi-arch (`linux/amd64` + `linux/arm64`) sont publiées sur
+[**Docker Hub — `laurentlevi/stockconsult`**](https://hub.docker.com/r/laurentlevi/stockconsult).
+Aucun build nécessaire, il suffit de les lancer :
+
+```bash
+# latest = Java 21 (Spring Boot 3.5)
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:latest
+```
+
+Tag par version de Java :
+
+```bash
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java8
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java11
+docker run --rm -p 8080:8080 laurentlevi/stockconsult:java21
+```
+
+| Tag Docker Hub | Java | Stack |
+|----------------|------|-------|
+| `latest`, `java21` | 21 | Spring Boot 3.5 (`jakarta`) |
+| `java11` | 11 | Spring Boot 2.7 (`javax`)  |
+| `java8`  | 8  | Spring Boot 2.7 (`javax`)  |
+
+Persister la base H2 avec un volume :
+
+```bash
+docker run --rm -p 8080:8080 -v vulnstock-data:/app/data laurentlevi/stockconsult:latest
+```
+
+Puis http://localhost:8080 — login **admin / admin**.
+
+### Construire l'image localement
+
+Construire et lancer depuis les sources (le `Dockerfile` compile le JAR, aucun build local requis) :
+
+```bash
+docker build -t stockconsult .
+docker run --rm -p 8080:8080 stockconsult
+```
+
+Ou via Compose (avec volume pour persister la base H2) :
+
+```bash
+docker compose up --build
+```
+
+Puis http://localhost:8080 — login **admin / admin**. Le fichier de base H2 est
+écrit dans `/app/data` du conteneur (monté sur le volume `vulnstock-data`).
+
+## Kubernetes
+
+Chaque branche fournit des manifests dans [`k8s/`](k8s/) (`Deployment` + `Service`
++ `kustomization.yaml`), pointant vers l'image Docker Hub de la branche
+(`main`→`java8`, `java11`, `java21`).
+
+Déployer avec kustomize :
+
+```bash
+kubectl apply -k k8s/
+kubectl rollout status deploy/stockconsult
+```
+
+Accéder à l'appli via un port-forward :
+
+```bash
+kubectl port-forward svc/stockconsult 8080:8080
+```
+
+Puis http://localhost:8080 — login **admin / admin**.
+
+Changer la version de Java déployée (sans changer de branche) en surchargeant le
+tag d'image :
+
+```bash
+cd k8s && kustomize edit set image laurentlevi/stockconsult=laurentlevi/stockconsult:java21
+```
+
+Le `Service` est en `ClusterIP` (accès par port-forward). Pour une exposition
+directe, passer son `type` en `NodePort` ou `LoadBalancer`. Supprimer le
+déploiement : `kubectl delete -k k8s/`.
+
+> ⚠️ Rappel : l'appli est **volontairement vulnérable**. Ne la déployez que sur un
+> cluster de test isolé, jamais exposée publiquement.
+
+## Démarrage (depuis les sources)
 
 ```bash
 mvn spring-boot:run
