@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+
+# Centralise le tag d'image : `kustomize edit set image` ou modifier ici.
+images:
+  - name: laurentlevi/stockconsult
+    newTag: java8

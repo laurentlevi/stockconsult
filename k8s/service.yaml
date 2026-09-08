@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stockconsult
+  labels:
+    app: stockconsult
+spec:
+  # ClusterIP par defaut : acceder via `kubectl port-forward` (voir README).
+  # Passer en NodePort ou LoadBalancer pour une exposition directe.
+  type: ClusterIP
+  selector:
+    app: stockconsult
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
